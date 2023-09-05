@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:fluttertoast/fluttertoast.dart";
 
 class HomePage extends StatefulWidget {
@@ -31,6 +32,37 @@ class _HomePageState extends State<HomePage> {
               _showToast();
             },
             child: const Text('btn'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              const android = AndroidNotificationDetails(
+                '0',
+                '알림 테스트',
+                channelDescription: '알림 테스트 바디 부분',
+                importance: Importance.max,
+                priority: Priority.max,
+              );
+              const ios = DarwinNotificationDetails();
+              const detail = NotificationDetails(
+                android: android,
+                iOS: ios,
+              );
+
+final permission = Platform.isAndroid
+    ? true
+    : await notification
+            .resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin>()
+            ?.requestPermissions(alert: true, badge: true, sound: true) ??
+        false;
+
+if (!permission) {
+  // await showNotiPermissionDialog(context);
+	return toast 권한이 없습니다.
+}
+
+            },
+            child: const Text('add alarm'),
           ),
           const Center(child: Text('hi'))
         ],
