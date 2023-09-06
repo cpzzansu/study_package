@@ -1,6 +1,9 @@
+import "dart:io";
+
 import "package:flutter/material.dart";
 import "package:flutter_local_notifications/flutter_local_notifications.dart";
 import "package:fluttertoast/fluttertoast.dart";
+import "package:study_package/main.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,7 +37,9 @@ class _HomePageState extends State<HomePage> {
             child: const Text('btn'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              final notification = flutterLocalNotificationsPlugin;
+
               const android = AndroidNotificationDetails(
                 '0',
                 '알림 테스트',
@@ -48,19 +53,28 @@ class _HomePageState extends State<HomePage> {
                 iOS: ios,
               );
 
-final permission = Platform.isAndroid
-    ? true
-    : await notification
-            .resolvePlatformSpecificImplementation<
-                IOSFlutterLocalNotificationsPlugin>()
-            ?.requestPermissions(alert: true, badge: true, sound: true) ??
-        false;
+              final permission = Platform.isAndroid
+                  ? true
+                  : await notification
+                          .resolvePlatformSpecificImplementation<
+                              IOSFlutterLocalNotificationsPlugin>()
+                          ?.requestPermissions(
+                              alert: true, badge: true, sound: true) ??
+                      false;
+              print('permission $permission');
 
-if (!permission) {
-  // await showNotiPermissionDialog(context);
-	return toast 권한이 없습니다.
-}
+              await flutterLocalNotificationsPlugin.show(
+                0,
+                'plain title',
+                'plain body',
+                detail,
+              );
 
+              if (!permission) {
+                // await showNotiPermissionDialog(context);
+                // return toast 권한이 없습니다.
+                return;
+              }
             },
             child: const Text('add alarm'),
           ),
